@@ -2,6 +2,9 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProjectService } from '../../../core/services/project.service';
 import { ModalService } from '../../../core/services/modal.service';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { TrashService } from '../../../core/services/trash.service';
 import { Project } from '../../../core/models/project.model';
 import { LoadingSpinnerComponent, ButtonComponent } from '../../../shared/ui';
 
@@ -577,6 +580,9 @@ import { LoadingSpinnerComponent, ButtonComponent } from '../../../shared/ui';
 export class ProjectsKanbanComponent implements OnInit {
   projectService = inject(ProjectService);
   modalService = inject(ModalService);
+  private confirmService = inject(ConfirmDialogService);
+  private toastService = inject(ToastService);
+  private trashService = inject(TrashService);
   draggedProject = signal<Project | null>(null);
   dragOverColumn = signal<string | null>(null);
 
@@ -639,9 +645,17 @@ export class ProjectsKanbanComponent implements OnInit {
   }
 
   onDeleteProject(projectId: string) {
-    if (confirm('¿Estás seguro de que deseas eliminar este proyecto?')) {
-      this.projectService.deleteProject(projectId);
-      alert('Proyecto eliminado correctamente');
-    }
+    const project = this.projectService.projects$().find(p => p.id === projectId);
+    this.confirmService.open({
+      title: 'Eliminar proyecto',
+      message: `\u00BFEst\u00E1s seguro de que deseas eliminar "${project?.name}"? Se mover\u00E1 a la papelera.`,
+      icon: '\uD83D\uDDD1\uFE0F',
+      confirmText: 'Eliminar',
+      onConfirm: () => {
+        this.projectService.deleteProject(projectId);
+        this.trashService.loadDeletedItems();
+        this.toastService.success('Proyecto movido a la papelera');
+      }
+    });
   }
 }

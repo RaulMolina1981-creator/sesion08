@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { StateService } from '../../../core/services/state.service';
+import { TrashService } from '../../../core/services/trash.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -33,6 +34,16 @@ import { StateService } from '../../../core/services/state.service';
             <a routerLink="/dashboard/metrics" class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
               <span class="icon">📈</span>
               <span class="label">Métricas</span>
+            </a>
+          </li>
+          <li class="nav-separator"></li>
+          <li>
+            <a routerLink="/dashboard/trash" class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
+              <span class="icon">🗑️</span>
+              <span class="label">Papelera</span>
+              <span class="badge-count" *ngIf="trashService.deletedCount() > 0">
+                {{ trashService.deletedCount() }}
+              </span>
             </a>
           </li>
         </ul>
@@ -154,8 +165,31 @@ import { StateService } from '../../../core/services/state.service';
       font-size: var(--font-size-sm);
       font-weight: 500;
     }
+
+    .nav-separator {
+      margin: var(--spacing-sm) var(--spacing-md);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .badge-count {
+      margin-left: auto;
+      background-color: var(--error-color);
+      color: white;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--radius-full, 12px);
+      min-width: 20px;
+      text-align: center;
+      line-height: 1.4;
+    }
   `]
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   stateService = inject(StateService);
+  trashService = inject(TrashService);
+
+  ngOnInit() {
+    this.trashService.loadDeletedItems();
+  }
 }

@@ -1,15 +1,19 @@
 import { Component, inject, OnInit, effect } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ModalContainerComponent } from './shared/components/modal-container.component';
+import { ToastContainerComponent } from './shared/components/toast-container.component';
+import { ConfirmDialogComponent } from './shared/components/confirm-dialog.component';
 import { StateService } from './core/services/state.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ModalContainerComponent],
+  imports: [RouterOutlet, ModalContainerComponent, ToastContainerComponent, ConfirmDialogComponent],
   template: `
     <router-outlet></router-outlet>
     <app-modal-container></app-modal-container>
+    <app-toast-container></app-toast-container>
+    <app-confirm-dialog></app-confirm-dialog>
   `,
   styles: []
 })

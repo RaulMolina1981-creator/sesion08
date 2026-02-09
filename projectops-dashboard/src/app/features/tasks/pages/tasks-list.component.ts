@@ -2,6 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../../core/services/task.service';
 import { ModalService } from '../../../core/services/modal.service';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { TrashService } from '../../../core/services/trash.service';
 import { LoadingSpinnerComponent, EmptyStateComponent, ButtonComponent } from '../../../shared/ui';
 
 @Component({
@@ -360,6 +363,9 @@ import { LoadingSpinnerComponent, EmptyStateComponent, ButtonComponent } from '.
 export class TasksListComponent implements OnInit {
   taskService = inject(TaskService);
   modalService = inject(ModalService);
+  private confirmService = inject(ConfirmDialogService);
+  private toastService = inject(ToastService);
+  private trashService = inject(TrashService);
   selectedStatus = '';
   selectedPriority = '';
   sortBy = 'date-desc';
@@ -464,9 +470,17 @@ export class TasksListComponent implements OnInit {
   }
 
   onDeleteTask(taskId: string) {
-    if (confirm('¿Estás seguro de que deseas eliminar esta tarea?')) {
-      this.taskService.deleteTask(taskId);
-      alert('Tarea eliminada correctamente');
-    }
+    const task = this.taskService.tasks$().find(t => t.id === taskId);
+    this.confirmService.open({
+      title: 'Eliminar tarea',
+      message: `\u00BFEst\u00E1s seguro de que deseas eliminar "${task?.title}"? Se mover\u00E1 a la papelera.`,
+      icon: '\uD83D\uDDD1\uFE0F',
+      confirmText: 'Eliminar',
+      onConfirm: () => {
+        this.taskService.deleteTask(taskId);
+        this.trashService.loadDeletedItems();
+        this.toastService.success('Tarea movida a la papelera');
+      }
+    });
   }
 }

@@ -30,6 +30,11 @@ export const routes: Routes = [
         path: 'metrics',
         loadChildren: () =>
           import('./features/metrics/metrics.routes').then(m => m.METRICS_ROUTES)
+      },
+      {
+        path: 'trash',
+        loadChildren: () =>
+          import('./features/trash/trash.routes').then(m => m.TRASH_ROUTES)
       }
     ]
   },

@@ -94,6 +94,19 @@ export class ProjectService {
     this.loadingSource.set(false);
   }
 
+  restoreProject(id: string) {
+    this.loadingSource.set(true);
+    this.jsonDb.restoreProject(id);
+    this.loadProjects();
+    this.loadingSource.set(false);
+  }
+
+  permanentDeleteProject(id: string) {
+    this.loadingSource.set(true);
+    this.jsonDb.permanentDeleteProject(id);
+    this.loadingSource.set(false);
+  }
+
   selectProject(id: string) {
     this.selectedProjectIdSource.set(id);
   }

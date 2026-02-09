@@ -93,4 +93,17 @@ export class TeamService {
     );
     this.loadingSource.set(false);
   }
+
+  restoreMember(id: string) {
+    this.loadingSource.set(true);
+    this.jsonDb.restoreTeamMember(id);
+    this.loadTeamMembers();
+    this.loadingSource.set(false);
+  }
+
+  permanentDeleteMember(id: string) {
+    this.loadingSource.set(true);
+    this.jsonDb.permanentDeleteTeamMember(id);
+    this.loadingSource.set(false);
+  }
 }

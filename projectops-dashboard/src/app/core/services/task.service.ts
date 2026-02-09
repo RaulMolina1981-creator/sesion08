@@ -106,6 +106,19 @@ export class TaskService {
     this.loadingSource.set(false);
   }
 
+  restoreTask(id: string) {
+    this.loadingSource.set(true);
+    this.jsonDb.restoreTask(id);
+    this.loadTasks();
+    this.loadingSource.set(false);
+  }
+
+  permanentDeleteTask(id: string) {
+    this.loadingSource.set(true);
+    this.jsonDb.permanentDeleteTask(id);
+    this.loadingSource.set(false);
+  }
+
   setFilters(filters: TaskFilters) {
     this.filtersSource.set(filters);
   }

@@ -12,6 +12,8 @@ export interface TeamMember {
   projects: string[];
   skills: string[];
   createdAt: Date;
+  isDeleted: boolean;
+  deletedAt: Date | null;
 }
 
 export interface CreateTeamMemberDTO {

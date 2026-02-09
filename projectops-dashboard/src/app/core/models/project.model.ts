@@ -15,6 +15,8 @@ export interface Project {
   team?: string;
   createdAt: Date;
   updatedAt: Date;
+  isDeleted: boolean;
+  deletedAt: Date | null;
 }
 
 export interface CreateProjectDTO {

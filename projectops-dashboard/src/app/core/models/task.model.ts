@@ -15,6 +15,8 @@ export interface Task {
   spentHours: number;
   createdAt: Date;
   updatedAt: Date;
+  isDeleted: boolean;
+  deletedAt: Date | null;
 }
 
 export interface CreateTaskDTO {

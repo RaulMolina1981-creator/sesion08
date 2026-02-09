@@ -2,6 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TeamService } from '../../../core/services/team.service';
 import { ModalService } from '../../../core/services/modal.service';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { TrashService } from '../../../core/services/trash.service';
 import { LoadingSpinnerComponent, EmptyStateComponent } from '../../../shared/ui';
 
 @Component({
@@ -458,6 +461,9 @@ import { LoadingSpinnerComponent, EmptyStateComponent } from '../../../shared/ui
 export class TeamOverviewComponent implements OnInit {
   teamService = inject(TeamService);
   modalService = inject(ModalService);
+  private confirmService = inject(ConfirmDialogService);
+  private toastService = inject(ToastService);
+  private trashService = inject(TrashService);
   selectedMember: any = null;
 
   ngOnInit() {
@@ -522,10 +528,18 @@ export class TeamOverviewComponent implements OnInit {
   }
 
   onDeleteMember(memberId: string) {
-    if (confirm('¿Estás seguro de que deseas eliminar este miembro?')) {
-      this.teamService.removeMember(memberId);
-      this.onCloseModal();
-      alert('Miembro eliminado correctamente');
-    }
+    const member = this.teamService.members$().find(m => m.id === memberId);
+    this.confirmService.open({
+      title: 'Eliminar miembro',
+      message: `\u00BFEst\u00E1s seguro de que deseas eliminar a "${member?.name}"? Se mover\u00E1 a la papelera.`,
+      icon: '\uD83D\uDDD1\uFE0F',
+      confirmText: 'Eliminar',
+      onConfirm: () => {
+        this.teamService.removeMember(memberId);
+        this.onCloseModal();
+        this.trashService.loadDeletedItems();
+        this.toastService.success('Miembro movido a la papelera');
+      }
+    });
   }
 }

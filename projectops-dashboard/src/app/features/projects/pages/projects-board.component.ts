@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProjectService } from '../../../core/services/project.service';
 import { ModalService } from '../../../core/services/modal.service';
+import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
+import { ToastService } from '../../../core/services/toast.service';
+import { TrashService } from '../../../core/services/trash.service';
 import { Project, CreateProjectDTO } from '../../../core/models/project.model';
 import { LoadingSpinnerComponent, EmptyStateComponent } from '../../../shared/ui';
 import { CreateProjectFormComponent } from '../components/create-project-form.component';
@@ -512,6 +515,9 @@ import { CreateProjectFormComponent } from '../components/create-project-form.co
 export class ProjectsBoardComponent implements OnInit {
   projectService = inject(ProjectService);
   private modalService = inject(ModalService);
+  private confirmService = inject(ConfirmDialogService);
+  private toastService = inject(ToastService);
+  private trashService = inject(TrashService);
 
   // Computed para métricas
   readonly projectMetrics = computed(() => {
@@ -566,10 +572,18 @@ export class ProjectsBoardComponent implements OnInit {
   }
 
   onDeleteProject(projectId: string) {
-    if (confirm('¿Estás seguro de que deseas eliminar este proyecto?')) {
-      this.projectService.deleteProject(projectId);
-      alert('Proyecto eliminado correctamente');
-    }
+    const project = this.projectService.projects$().find(p => p.id === projectId);
+    this.confirmService.open({
+      title: 'Eliminar proyecto',
+      message: `\u00BFEst\u00E1s seguro de que deseas eliminar "${project?.name}"? Se mover\u00E1 a la papelera.`,
+      icon: '\uD83D\uDDD1\uFE0F',
+      confirmText: 'Eliminar',
+      onConfirm: () => {
+        this.projectService.deleteProject(projectId);
+        this.trashService.loadDeletedItems();
+        this.toastService.success('Proyecto movido a la papelera');
+      }
+    });
   }
 
   // Función para limpiar cache y recargar (para debugging)
