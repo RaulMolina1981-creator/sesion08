@@ -1,0 +1,32 @@
+# Dependencias
+node_modules/
+
+# Caché de Angular
+.angular/
+
+# Build / Compilados
+dist/
+
+# Archivos de entorno con secretos
+.env
+.env.local
+.env.production
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Sistema operativo
+Thumbs.db
+.DS_Store
+nul
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Claude
+.claude/
