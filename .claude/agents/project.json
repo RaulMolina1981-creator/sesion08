@@ -1,0 +1,164 @@
+{
+  "name": "ProjectOps Dashboard",
+  "version": "1.0.0",
+  "description": "Sistema de agentes especializados para el desarrollo del ProjectOps Dashboard (Angular 20)",
+  "stack": {
+    "framework": "Angular 20",
+    "language": "TypeScript 5.9",
+    "state": "Signals (signal, computed, effect)",
+    "styling": "CSS puro con variables CSS",
+    "testing": "Jasmine + Karma",
+    "persistence": "LocalStorage via JsonDatabaseService",
+    "routing": "Lazy loading por feature"
+  },
+  "agents": {
+    "project-manager": {
+      "role": "Meta-agente coordinador",
+      "description": "Coordina y delega tareas a los agentes especializados. Punto de entrada principal para solicitudes complejas.",
+      "canDelegate": [
+        "database",
+        "fullstack-developer",
+        "tester",
+        "security",
+        "optimization",
+        "ui-ux",
+        "documentation"
+      ],
+      "priority": 0
+    },
+    "database": {
+      "role": "Especialista en datos y persistencia",
+      "description": "Gestiona modelos de datos, interfaces, DTOs, JsonDatabaseService y operaciones CRUD en LocalStorage.",
+      "scope": [
+        "src/app/core/models/",
+        "src/app/core/services/json-database.service.ts",
+        "src/app/core/services/data-initializer.service.ts",
+        "src/app/core/services/mock-data.service.ts",
+        "src/assets/data/db.json",
+        "src/data/db.json"
+      ],
+      "priority": 1
+    },
+    "fullstack-developer": {
+      "role": "Desarrollador Angular fullstack",
+      "description": "Genera componentes standalone, servicios con Signals, rutas lazy-loaded y features completos.",
+      "scope": [
+        "src/app/features/",
+        "src/app/core/services/",
+        "src/app/shared/components/",
+        "src/app/shared/ui/",
+        "src/app/app.routes.ts",
+        "src/app/app.config.ts"
+      ],
+      "priority": 1
+    },
+    "tester": {
+      "role": "Especialista en testing",
+      "description": "Escribe tests unitarios con Jasmine/Karma, configura TestBed para standalone components y servicios con Signals.",
+      "scope": [
+        "**/*.spec.ts",
+        "src/app/core/services/",
+        "src/app/features/",
+        "src/app/shared/"
+      ],
+      "priority": 2
+    },
+    "security": {
+      "role": "Auditor de seguridad",
+      "description": "Revisa vulnerabilidades, interceptors de autenticacion, sanitizacion de datos y cumplimiento de OWASP.",
+      "scope": [
+        "src/app/core/interceptors/",
+        "src/app/core/services/api.service.ts",
+        "src/app/app.config.ts",
+        "src/app/shared/directives/"
+      ],
+      "priority": 2
+    },
+    "optimization": {
+      "role": "Especialista en rendimiento",
+      "description": "Optimiza bundle size, Signals, ChangeDetection OnPush, lazy loading y rendimiento general.",
+      "scope": [
+        "src/app/features/",
+        "src/app/core/services/",
+        "angular.json",
+        "tsconfig.json"
+      ],
+      "priority": 2
+    },
+    "ui-ux": {
+      "role": "Especialista en interfaz y experiencia de usuario",
+      "description": "Gestiona estilos CSS, responsividad, sistema de temas, componentes UI reutilizables y accesibilidad.",
+      "scope": [
+        "src/styles/",
+        "src/app/shared/ui/",
+        "src/app/shared/components/",
+        "src/app/shared/pipes/",
+        "src/app/shared/directives/"
+      ],
+      "priority": 2
+    },
+    "documentation": {
+      "role": "Documentador tecnico",
+      "description": "Genera y mantiene documentacion tecnica, README, comentarios en codigo y guias de contribucion.",
+      "scope": [
+        "*.md",
+        "src/app/core/models/",
+        "src/app/core/services/"
+      ],
+      "priority": 3
+    }
+  },
+  "workflows": {
+    "new-feature": {
+      "description": "Flujo para implementar una nueva funcionalidad completa",
+      "steps": [
+        { "agent": "project-manager", "action": "Analizar requisitos y planificar" },
+        { "agent": "database", "action": "Crear modelos, DTOs e interfaces" },
+        { "agent": "fullstack-developer", "action": "Implementar servicio, componentes y rutas" },
+        { "agent": "ui-ux", "action": "Aplicar estilos y responsividad" },
+        { "agent": "tester", "action": "Escribir tests unitarios" },
+        { "agent": "security", "action": "Auditar seguridad del nuevo codigo" },
+        { "agent": "documentation", "action": "Documentar la funcionalidad" }
+      ]
+    },
+    "bug-fix": {
+      "description": "Flujo para diagnosticar y corregir un bug",
+      "steps": [
+        { "agent": "project-manager", "action": "Triaje y asignacion del bug" },
+        { "agent": "fullstack-developer", "action": "Diagnosticar causa raiz y corregir" },
+        { "agent": "tester", "action": "Escribir test de regresion" }
+      ]
+    },
+    "refactor": {
+      "description": "Flujo para refactorizar codigo existente",
+      "steps": [
+        { "agent": "project-manager", "action": "Evaluar alcance del refactor" },
+        { "agent": "optimization", "action": "Identificar mejoras de rendimiento" },
+        { "agent": "fullstack-developer", "action": "Implementar refactorizacion" },
+        { "agent": "tester", "action": "Verificar que no hay regresiones" }
+      ]
+    },
+    "security-audit": {
+      "description": "Flujo para auditoria de seguridad completa",
+      "steps": [
+        { "agent": "security", "action": "Analisis completo de vulnerabilidades" },
+        { "agent": "fullstack-developer", "action": "Aplicar correcciones" },
+        { "agent": "tester", "action": "Verificar correcciones de seguridad" }
+      ]
+    }
+  },
+  "conventions": {
+    "pathAliases": {
+      "@app/*": "src/app/*",
+      "@core/*": "src/app/core/*",
+      "@shared/*": "src/app/shared/*",
+      "@features/*": "src/app/features/*"
+    },
+    "signalNaming": "nombre$ (con sufijo $)",
+    "componentPrefix": "app-",
+    "componentStyle": "standalone (sin NgModules)",
+    "injectionStyle": "inject() en lugar de constructor DI",
+    "controlFlow": "@if / @for / @switch (Angular 20 syntax)",
+    "cssVariablesFile": "src/styles/variables.css"
+  }
+}
